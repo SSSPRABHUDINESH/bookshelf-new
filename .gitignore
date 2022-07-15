@@ -1,0 +1,7 @@
+terraform.tfstate
+terraform.tfstate.backup
+bookshelf-credentials.json
+terraform.tfvars
+.terraform
+.terraform.lock.hcl
+
