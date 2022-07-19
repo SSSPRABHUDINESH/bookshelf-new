@@ -11,12 +11,6 @@ data "google_iam_policy" "admin" {
     ]
   }
 }
-
-resource "google_project_iam_member" "iam_user_secretAccessor_user" {
-  role   = "roles/secretmanager.secretAccessor"
-  member = "serviceAccount:${google_service_account.service_account.email}"
-}
-
 resource "google_project_iam_member" "iam_user_loggingadmin_user" {
   role   = "roles/logging.admin"
   member = "serviceAccount:${google_service_account.service_account.email}"
