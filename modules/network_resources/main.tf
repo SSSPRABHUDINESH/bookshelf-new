@@ -19,6 +19,7 @@ resource "google_compute_subnetwork" "subnet" {
 # Firewall rules starts from here
 
 resource "google_compute_firewall" "rules" {
+  description             = "Creates allow-health-check firewall rule targeting tagged instances"
   project = var.project_id
   name    = "allow-health-check"
   network = google_compute_network.vpc-network.id
@@ -34,6 +35,7 @@ resource "google_compute_firewall" "rules" {
   target_tags   = ["health-check"]
 }
 resource "google_compute_firewall" "allow-ssh" {
+  description             = "Creates allow-ssh firewall rule targeting tagged instances"
   project = var.project_id
   name    = "allow-ssh"
   network = google_compute_network.vpc-network.id
@@ -47,16 +49,6 @@ resource "google_compute_firewall" "allow-ssh" {
   direction     = "INGRESS"
   source_ranges = ["35.235.240.0/20"]
   target_tags   = ["allow-ssh"]
-}
-resource "google_compute_firewall" "allow-auth-proxy-firewall" {
-  name    = "allow-auth-proxy-firewall"
-  network = google_compute_network.vpc-network.id
-
-  allow {
-    protocol = "tcp"
-    ports    = ["3306", "443"]
-  }
-  direction = "EGRESS"
 }
 
 # Router for Cloud Nat 
@@ -96,42 +88,40 @@ resource "google_compute_global_address" "private_ip_address" {
 }
 
 
-
-# Load Balancer 
+#Load Balancer 
 resource "google_compute_global_address" "default" {
-  provider = google-beta
   name     = var.static-ip-name
 }
 
 
 resource "google_compute_global_forwarding_rule" "default" {
   name                  = var.forwarding-rule-name
-  provider              = google-beta
+  provider              = google
   ip_protocol           = "TCP"
   load_balancing_scheme = "EXTERNAL"
   port_range            = "80"
   target                = google_compute_target_http_proxy.default.id
-  ip_address            = google_compute_global_address.default.id
+  ip_address            = google_compute_global_address.default.address
 }
 
 
 resource "google_compute_target_http_proxy" "default" {
   name     = var.target-http-proxy-name
-  provider = google-beta
+  
   url_map  = google_compute_url_map.default.id
 }
 
 
 resource "google_compute_url_map" "default" {
   name            = var.url-map-name
-  provider        = google-beta
+ 
   default_service = google_compute_backend_service.default.id
 }
 
 
 resource "google_compute_backend_service" "default" {
   name                  = var.backend-service-name
-  provider              = google-beta
+  
   protocol              = "HTTP"
   port_name             = "http"
   load_balancing_scheme = "EXTERNAL"

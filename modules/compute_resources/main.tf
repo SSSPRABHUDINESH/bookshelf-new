@@ -4,19 +4,13 @@ resource "google_service_account" "service_account" {
 }
 data "google_iam_policy" "admin" {
   binding {
-    role = "roles/owner"
+    role = "roles/editor"
 
     members = [
       "serviceAccount:${google_service_account.service_account.email}",
     ]
   }
 }
-
-resource "google_project_iam_member" "iam_user_secretAccessor_user" {
-  role   = "roles/secretmanager.secretAccessor"
-  member = "serviceAccount:${google_service_account.service_account.email}"
-}
-
 resource "google_project_iam_member" "iam_user_loggingadmin_user" {
   role   = "roles/logging.admin"
   member = "serviceAccount:${google_service_account.service_account.email}"
@@ -39,7 +33,7 @@ resource "google_project_iam_member" "iam_user_storagea_user" {
 }
 
 resource "google_project_iam_member" "iam_owner_user" {
-  role   = "roles/owner"
+  role   = "roles/editor"
   member = "serviceAccount:${google_service_account.service_account.email}"
 }
 
@@ -98,14 +92,16 @@ resource "google_compute_autoscaler" "default" {
 
 
 resource "google_compute_health_check" "autohealing" {
-  name                = var.health_check_name
-  check_interval_sec  = var.check_interval_sec
-  timeout_sec         = var.timeout_sec
+  name = var.health_check_name
+
+  timeout_sec        = var.timeout_sec
+  check_interval_sec = var.check_interval_sec
   healthy_threshold   = var.healthy_threshold
   unhealthy_threshold = var.unhealthy_threshold
 
-  tcp_health_check {
+  http_health_check {
     port = var.port
+    request_path = "/_ah/health"
   }
 }
 
