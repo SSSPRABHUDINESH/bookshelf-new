@@ -45,7 +45,7 @@ resource "google_compute_firewall" "allow-ssh" {
   }
 
   direction     = "INGRESS"
-  source_ranges = ["0.0.0.0/0"]
+  source_ranges = ["35.235.240.0/20"]
   target_tags   = ["allow-ssh"]
 }
 resource "google_compute_firewall" "allow-auth-proxy-firewall" {
