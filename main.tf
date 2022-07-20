@@ -35,66 +35,67 @@ data "terraform_remote_state" "remote_state" {
 module "network_resources" {
   source = "./modules/network_resources"
 
-  vpc-network-name          = "bookshelf-vpc"
-  bookshelf-subnet-name     = "bookshelf-subnet"
-  bookshelf-subnet-ip-range = "10.0.0.0/20"
-  secondary_ip_range_name   = "bookshelf-subnet-secondary-ip"
-  secondary_ip_range        = "192.168.10.0/24"
+  vpc-network-name          = var.vpc_network_name
+  bookshelf-subnet-name     = var.bookshelf_subnet_name
+  bookshelf-subnet-ip-range = var.bookshelf_subnet_ip_range
+  secondary_ip_range_name   = var.secondary-ip-range-name
+  secondary_ip_range        = var.secondary-ip-range
 
   # Router and Nat inputs starts from here
-  router-name = "bookshelf-router"
-  nat-name    = "bookshelf-nat"
+  router-name = var.router_name
+  nat-name    = var.nat_name
 
 
   # loadbalancer inputs starts from here
   health_check_id        = module.compute_resources.health_check_id
   mig_id                 = module.compute_resources.mig_id
-  static-ip-name         = "lb-static-ip"
-  forwarding-rule-name   = "lb-forwarding-rule"
-  target-http-proxy-name = "lb-target-http-proxy"
-  url-map-name           = "lb-url-map"
-  backend-service-name   = "lb-backend-service"
+  static-ip-name         = var.static_ip_name
+  forwarding-rule-name   = var.forwarding_rule_name
+  target-http-proxy-name = var.target_http_proxy_name
+  url-map-name           = var.url_map_name
+  backend-service-name   = var.backend_service_name
 }
 
 module "compute_resources" {
   source = "./modules/compute_resources"
 
   project_id    = var.project_id
-  template-name = "bookshelf-template-terraform"
+  template-name = var.template_name
   # Autoscaler inputs starts from here
   zone            = var.zone
-  autoscaler_name = "bookshelf-autoscaler"
-  max_replicas    = 2
-  min_replicas    = 1
-  cooldown_period = 300
+  autoscaler_name = var.autoscaler-name
+  max_replicas    = var.max-replicas
+  min_replicas    = var.min-replicas
+  cooldown_period = var.cooldown-period
   # Healthcheck inputs starts from here
-  health_check_name   = "bookshelf-healthcheck"
-  check_interval_sec  = 5
-  timeout_sec         = 5
-  healthy_threshold   = 2
-  unhealthy_threshold = 2
-  port                = 8080
+  health_check_name   = var.health-check-name
+  check_interval_sec  = var.check-interval-sec
+  timeout_sec         = var.timeout-sec
+  healthy_threshold   = var.healthy-threshold
+  unhealthy_threshold = var.unhealthy-threshold
+  port                = var.port_num
   # Instance group manager inputs starts from here
-  instance_group_manager_name  = "bookshelf-instancegroup-manager"
-  bookshelf_base_instance_name = "bookshelf-base-instance"
+  instance_group_manager_name  = var.instance-group-manager-name
+  bookshelf_base_instance_name = var.bookshelf-base-instance-name
   network_id                   = module.network_resources.vpc_network_id
   subnetwork_id                = module.network_resources.vpc_subnetwork_id
-  service_account_display_name = "bookshelf-terraform-sa"
-  service_account_id           = "bookshelf-terraform-sa"
+  service_account_display_name = var.service-account-display-name
+  service_account_id           = var.service-account-id
 }
 
 module "storage_resources" {
   source = "./modules/storage_resources"
 
-  image_bucket_name       = "image-sql-bookshelf-bucket"
-  sql-instance-name       = "bookshelf-sql-instance-10"
+  image_bucket_name       = var.image-bucket-name
+  sql-instance-name       = var.sql_instance_name
   vpc_network_id          = module.network_resources.vpc_network_id
   region                  = var.region
   private_ip_address_id   = module.network_resources.private_ip_address_id
   private_ip_address_name = module.network_resources.private_ip_address_name
   # SQL-Database
-  sql-database-name = "bookshelf-db"
+  sql-database-name = var.sql_database_name
   # User
-  sql-username = "root"
+  sql-username = var.sql_username
   sql-password = var.password
 }
+
