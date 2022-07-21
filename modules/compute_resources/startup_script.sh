@@ -57,7 +57,7 @@ After=networking.service
 [Service]
 Type=simple
 WorkingDirectory=/usr/local/bin
-ExecStart=/usr/local/bin/cloud_sql_proxy -instances=gcp-2021-2-bookshelf-satya:us-central1:bookshelf-sql-instance-10=tcp:3306
+ExecStart=/usr/local/bin/cloud_sql_proxy -instances=gcp-2021-2-bookshelf-satsai:us-central1:bookshelf-sql-instance-13=tcp:3306
 Restart=always
 StandardOutput=journal
 User=root
@@ -93,7 +93,7 @@ pip install virtualenv
 # git requires $HOME and it's not set during the startup script.
 export HOME=/root
 git config --global credential.helper gcloud.sh
-git clone https://source.developers.google.com/p/gcp-2021-2-bookshelf-satya/r/book-shelf-repo -b steps /opt/app
+git clone https://source.developers.google.com/p/gcp-2021-2-bookshelf-satsai/r/bookshelf_cloud_repo_new_test_4 -b steps /opt/app
 
 
 

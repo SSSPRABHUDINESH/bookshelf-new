@@ -2,46 +2,14 @@ resource "google_service_account" "service_account" {
   account_id   = var.service_account_id
   display_name = var.service_account_display_name
 }
-data "google_iam_policy" "admin" {
-  binding {
+resource "google_project_iam_binding" "admin" {
+    project = var.project_id
     role = "roles/editor"
 
     members = [
-      "serviceAccount:${google_service_account.service_account.email}",
+      "serviceAccount:${google_service_account.service_account.email}"
     ]
-  }
 }
-resource "google_project_iam_member" "iam_user_loggingadmin_user" {
-  role   = "roles/logging.admin"
-  member = "serviceAccount:${google_service_account.service_account.email}"
-}
-resource "google_project_iam_member" "iam_user_cloudsql_instance_user" {
-  role   = "roles/cloudsql.admin"
-  member = "serviceAccount:${google_service_account.service_account.email}"
-}
-resource "google_project_iam_member" "iam_user_computeadmin_user" {
-  role   = "roles/compute.admin"
-  member = "serviceAccount:${google_service_account.service_account.email}"
-}
-resource "google_project_iam_member" "iam_user_sourcereader_user" {
-  role   = "roles/source.reader"
-  member = "serviceAccount:${google_service_account.service_account.email}"
-}
-resource "google_project_iam_member" "iam_user_storagea_user" {
-  role   = "roles/storage.objectViewer"
-  member = "serviceAccount:${google_service_account.service_account.email}"
-}
-
-resource "google_project_iam_member" "iam_owner_user" {
-  role   = "roles/editor"
-  member = "serviceAccount:${google_service_account.service_account.email}"
-}
-
-resource "google_service_account_iam_policy" "project" {
-  service_account_id = google_service_account.service_account.name
-  policy_data        = data.google_iam_policy.admin.policy_data
-}
-
 
 data "google_compute_image" "debian9-image" {
   family  = "debian-9"
