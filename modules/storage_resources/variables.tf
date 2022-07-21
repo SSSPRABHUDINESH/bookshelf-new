@@ -21,10 +21,8 @@ variable "sql-database-name" {
 }
 variable "sql-username" {
   type = string
-  #   type = sensitive
 }
 
 variable "sql-password" {
   type = string
-  #   type = sensitive
 }

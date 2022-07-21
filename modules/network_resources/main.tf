@@ -19,7 +19,6 @@ resource "google_compute_subnetwork" "subnet" {
 # Firewall rules starts from here
 
 resource "google_compute_firewall" "rules" {
-  description             = "Creates allow-health-check firewall rule targeting tagged instances"
   project = var.project_id
   name    = "allow-health-check"
   network = google_compute_network.vpc-network.id
@@ -35,7 +34,6 @@ resource "google_compute_firewall" "rules" {
   target_tags   = ["health-check"]
 }
 resource "google_compute_firewall" "allow-ssh" {
-  description             = "Creates allow-ssh firewall rule targeting tagged instances"
   project = var.project_id
   name    = "allow-ssh"
   network = google_compute_network.vpc-network.id
