@@ -99,3 +99,13 @@ module "storage_resources" {
   sql-password = var.password
 }
 
+module "jump_server" {
+  source = "./modules/jump_server"
+
+  instance_name = var.instance-name
+  network_id = module.network_resources.vpc_network_id
+  subnetwork_id = module.network_resources.vpc_subnetwork_id
+  sa_email = module.compute_resources.sa_email_instance
+
+}
+

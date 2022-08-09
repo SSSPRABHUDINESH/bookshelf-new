@@ -2,27 +2,34 @@ resource "google_service_account" "service_account" {
   account_id   = var.service_account_id
   display_name = var.service_account_display_name
 }
-resource "google_project_iam_binding" "admin" {
+resource "google_project_iam_member" "admin" {
     project = var.project_id
     role = "roles/editor"
-
-    members = [
-      "serviceAccount:${google_service_account.service_account.email}"
-    ]
+    member = "serviceAccount:${google_service_account.service_account.email}"
+}
+resource "google_project_iam_member" "admin1" {
+    project = var.project_id
+    role = "roles/iam.serviceAccountUser"
+    member = "serviceAccount:${google_service_account.service_account.email}"
+}
+resource "google_project_iam_member" "admin2" {
+    project = var.project_id
+    role = "roles/compute.osAdminLogin"
+    member = "serviceAccount:${google_service_account.service_account.email}"
 }
 
-data "google_compute_image" "debian9-image" {
-  family  = "debian-9"
-  project = "debian-cloud"
-}
+
 
 resource "google_compute_instance_template" "bookshelf-instance-template" {
   name         = var.template-name
+  labels = {
+    ansible = "ansible"
+  }
   machine_type = "e2-medium"
   tags         = ["health-check", "allow-ssh"]
 
   disk {
-    source_image = data.google_compute_image.debian9-image.self_link
+    source_image = "projects/gcp-2021-2-bookshelf-dineshs/global/images/debian-9-custom"
     auto_delete  = true
     boot         = true
   }
@@ -32,7 +39,6 @@ resource "google_compute_instance_template" "bookshelf-instance-template" {
     subnetwork = var.subnetwork_id
   }
 
-  metadata_startup_script = file("modules/compute_resources/startup_script.sh")
   service_account {
     email  = google_service_account.service_account.email
     scopes = ["cloud-platform"]
