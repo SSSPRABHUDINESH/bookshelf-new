@@ -20,7 +20,7 @@ variable "vpc-network-name" {
 
 variable "project_id" {
   type    = string
-  default = "gcp-2021-2-bookshelf-satsai"
+  default = "gcp-2021-2-bookshelf-dineshs"
 }
 variable "health_check_id" {
   type = string

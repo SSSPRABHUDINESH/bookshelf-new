@@ -133,6 +133,8 @@ variable "sql_username" {
 }
 
 
-
+variable "instance-name" {
+  type = string
+}
 
 
