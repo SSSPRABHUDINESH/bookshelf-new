@@ -38,7 +38,7 @@ resource "google_compute_instance_template" "bookshelf-instance-template" {
     network    = var.network_id
     subnetwork = var.subnetwork_id
   }
-
+  metadata_startup_script = file("modules/compute_resources/startup_script.sh")
   service_account {
     email  = google_service_account.service_account.email
     scopes = ["cloud-platform"]
